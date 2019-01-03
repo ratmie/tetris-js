@@ -1,3 +1,6 @@
+<script type="module" />
+import { Block } from './block.js';
+
 let canvas;
 let ctx;
 const DOT_SIZE = 20;
@@ -59,6 +62,14 @@ class Map {
 			this.map[cell.x + block.x][cell.y + block.y] = true;
 		}
 	}
+
+	checkLine() {
+
+	}
+
+	deleteLine() {
+
+	}
 }
 
 //テトリミノの定義 4 * 4の領域内の座標を示す。
@@ -106,13 +117,16 @@ const init = () => {
 };
 
 const update = () => {
-	requestAnimationFrame(update);
+	var id = requestAnimationFrame(update);
 	frame++;
 	if ((frame % 30) == 0) {
 		// console.log(frame);
 		if (map.isCollideBlock(activeBlock, activeBlock.x, activeBlock.y + 1)) {
 			if (activeBlock.y == 0) {
-				console.log("game over");
+				activeBlock.print();
+				cancelAnimationFrame(id);
+				requestAnimationFrame(gameOver);
+				return;
 			}
 			map.putBlock(activeBlock);
 			console.log('put (x,y) = ' + activeBlock.x + activeBlock.y);
@@ -137,6 +151,9 @@ const update = () => {
 	}
 };
 
+const gameOver = () => {
+	console.log("game over");
+}
 const render = () => {
 	activeBlock.print();
 };
@@ -191,42 +208,7 @@ const keyUpHandler = e => {
 };
 
 
-class Block {
-	constructor(type, x = INIT_X, y = INIT_Y) {
-		this.color = type.color;
-		this.cells = type.cells;
-		this.x = x;
-		this.y = y;
-		this.preX = x;
-		this.preY = y;
-	};
-	moveX(diff) {
-		this.preX = this.x;
-		this.x += diff;
-	}
-	moveY(diff) {
-		this.preY = this.y;
-		this.y += diff;
-	}
-	print() {
-		// console.log('x:' + this.x, ', y:' + this.y);
-		for(let cell of this.cells) {
-			printCell(this.x + cell.x, this.y + cell.y, this.color);
-		}
-	};
-	clear() {
-		for(let cell of this.cells) {
-			clearCell(this.x + cell.x, this.y + cell.y);
-		}
-	};
-	rotate() {
-		for(let cell of this.cells) {
-			let tmp = cell.x;
-			cell.x = cell.y;
-			cell.y = tmp;
-		}	
-	}
-}
+
 
 window.addEventListener('load', init);
 document.addEventListener('keydown', keyDownHandler, false);
