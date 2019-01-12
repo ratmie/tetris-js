@@ -1,5 +1,20 @@
+const DOT_SIZE = 20;
+const FIELD_WIDTH = 10;
+const FIELD_HEIGHT = 20;
+const GREY = "rgb(128,128,128)";
+const BG = "rgb(225,225,225)";
+const WHITE = "rgb(5,5,5)";
+const RED = "rgb(240,0,0)";
+const BLUE = "rgb(0,0,240)";
+const GREEN = "rgb(0,245,0)";
+const YELLOW = "rgb(250,250,0)";
+const CYAN = "rgb(0,245,245)";
+const MAGENTA = "rgb(255,0,255)";
+const ORANGE = "rgb(255,165,0)";
+
 class Block {
-	constructor(type, x = INIT_X, y = INIT_Y) {
+	constructor(ctx, type, x, y) {
+		this.ctx = ctx;
 		this.color = type.color;
 		this.cells = type.cells;
 		this.x = x;
@@ -18,12 +33,12 @@ class Block {
 	print() {
 		// console.log('x:' + this.x, ', y:' + this.y);
 		for(let cell of this.cells) {
-			printCell(this.x + cell.x, this.y + cell.y, this.color);
+			printCell(this.ctx, this.x + cell.x, this.y + cell.y, this.color);
 		}
 	};
 	clear() {
 		for(let cell of this.cells) {
-			clearCell(this.x + cell.x, this.y + cell.y);
+			clearCell(this.ctx, this.x + cell.x, this.y + cell.y);
 		}
 	};
 	rotate() {
@@ -34,5 +49,30 @@ class Block {
 		}	
 	}
 }
+const printCell = (ctx, x, y, color = BG) => {
+	if (checkRange(x, y)) {
+		ctx.fillStyle = GREY;
+		ctx.fillRect(x * DOT_SIZE, y * DOT_SIZE, DOT_SIZE, DOT_SIZE);
+		ctx.fillStyle = color;
+		ctx.fillRect(x * DOT_SIZE  + 2, y * DOT_SIZE + 2, DOT_SIZE - 4, DOT_SIZE - 4);
+		// ctx.strokeStyle = GREY;
+		// ctx.strokeRect(x * DOT_SIZE, y * DOT_SIZE, DOT_SIZE, DOT_SIZE);
+	} else {
+		console.log('false x:' + x + ' y:' + y);
+	}
+};
 
+const clearCell = (ctx, x, y)=> {
+	ctx.clearRect(x * DOT_SIZE, y * DOT_SIZE, DOT_SIZE, DOT_SIZE);
+	ctx.fillStyle = BG;
+	ctx.fillRect(x * DOT_SIZE, y * DOT_SIZE, DOT_SIZE, DOT_SIZE);
+	// ctx.strokeStyle = BG;
+	// ctx.strokeRect(x * DOT_SIZE, y * DOT_SIZE, DOT_SIZE, DOT_SIZE);
+};
+const checkRange = (x, y) => {
+	if ((0 <= x) && (x < FIELD_WIDTH) && (0 <= y) && (y < FIELD_HEIGHT)) {
+		return true;
+	}
+	return false;
+};
 export { Block };
