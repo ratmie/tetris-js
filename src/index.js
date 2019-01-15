@@ -1,8 +1,8 @@
+import { Config } from './config.js'
 import { Block } from './block.js';
 
 let canvas;
 let ctx;
-const DOT_SIZE = 20;
 const GREY = "rgb(128,128,128)";
 const BG = "rgb(225,225,225)";
 const WHITE = "rgb(5,5,5)";
@@ -14,15 +14,6 @@ const CYAN = "rgb(0,245,245)";
 const MAGENTA = "rgb(255,0,255)";
 const ORANGE = "rgb(255,165,0)";
 
-const FIELD_WIDTH = 10;
-const FIELD_HEIGHT = 20;
-const SCREEN_WIDTH = FIELD_WIDTH * DOT_SIZE;
-const SCREEN_HEIGHT = FIELD_HEIGHT * DOT_SIZE;
-const BLOCK_SIZE = 4;
-const INIT_X = 3;
-const INIT_Y = 0;
-var posX = INIT_X;
-var posY = INIT_Y;
 var rightPressed = false;
 var leftPressed = false;
 var topPressed = false;
@@ -33,6 +24,7 @@ var map;
 
 class Map {
 	constructor(width, height){
+		this.height = height;
 		this.map = new Array(height);
 		for(let y = 0; y < height; y++) {
 			this.map[y] = (new Array(width).fill(false));
@@ -64,12 +56,48 @@ class Map {
 		}
 	}
 
-	checkLine() {
-
+	checkLine(y) {
+		for (let x = 0; x < this.width; x++) {
+			if(!this.isExistCell(x, y)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
-	deleteLine() {
+	deleteLine(ys) {
+		for (let y = ys; y > 0; y--){
+			for (let x; x < this.width; x++) {
+				map[x][y] = map[x][y-1];
+			}
+		}
+		this.clearMap();
+		this.printfMap();
+	}
 
+	clearMap() {
+		for (let y = 0; y < this.height; y++) {
+			for (let x = 0; x < this.width; x++) {
+				this.map[x][y].clear();
+			}
+		}		
+	}
+
+	printfMap() {
+		for (let y = 0; y < this.height; y++) {
+			for (let x = 0; x < this.width; x++) {
+				this.map[x][y].print();
+			}
+		}
+	}
+
+	checkMap() {
+		for (let y = 0; y < this.height; y++) {
+			if (this.checkLine(y)) {
+				console.log("check ok");
+				this.deleteLine(y);
+			}
+		}
 	}
 }
 
@@ -107,13 +135,14 @@ const BlockType = [{
 const init = () => {
 	canvas = document.getElementById('maincanvas');
 	ctx = canvas.getContext('2d');
-	canvas.width = SCREEN_WIDTH;
-	canvas.height = SCREEN_HEIGHT;
+	canvas.width = Config.SCREEN_WIDTH;
+	canvas.height = Config.SCREEN_HEIGHT;
 	ctx.fillStyle = BG;
+	console.log(canvas.width, canvas.height);
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	ctx.lineWidth = 2;
-	map = new Map(FIELD_WIDTH, FIELD_HEIGHT);
-	activeBlock = new Block(ctx, BlockType[6], INIT_X, INIT_Y);
+	map = new Map(Config.FIELD_WIDTH, Config.FIELD_HEIGHT);
+	activeBlock = new Block(ctx, BlockType[6], Config.INIT_X, Config.INIT_Y);
 	requestAnimationFrame(update);
 };
 
@@ -131,6 +160,7 @@ const update = () => {
 			}
 			map.putBlock(activeBlock);
 			console.log('put (x,y) = ' + activeBlock.x + activeBlock.y);
+			map.checkMap();
 			activeBlock = new Block(ctx, BlockType[Math.floor(Math.random()*7)], INIT_X, INIT_Y);
 		} else {
 			activeBlock.clear();
@@ -162,7 +192,7 @@ const render = () => {
 
 
 const checkRange = (x, y) => {
-	if ((0 <= x) && (x < FIELD_WIDTH) && (0 <= y) && (y < FIELD_HEIGHT)) {
+	if ((0 <= x) && (x < Config.FIELD_WIDTH) && (0 <= y) && (y < Config.FIELD_HEIGHT)) {
 		return true;
 	}
 	return false;

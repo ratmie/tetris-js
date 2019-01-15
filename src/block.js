@@ -1,6 +1,6 @@
-const DOT_SIZE = 20;
-const FIELD_WIDTH = 10;
-const FIELD_HEIGHT = 20;
+import { Config } from './config.js'
+
+import { Cell } from "./cell.js";
 const GREY = "rgb(128,128,128)";
 const BG = "rgb(225,225,225)";
 const WHITE = "rgb(5,5,5)";
@@ -33,6 +33,7 @@ class Block {
 	print() {
 		// console.log('x:' + this.x, ', y:' + this.y);
 		for(let cell of this.cells) {
+			cell.print(x, y);
 			printCell(this.ctx, this.x + cell.x, this.y + cell.y, this.color);
 		}
 	};
@@ -44,7 +45,7 @@ class Block {
 	rotate() {
 		for(let cell of this.cells) {
 			let tmp = cell.x;
-			cell.x = cell.y;
+			cell.x = 3 - cell.y;
 			cell.y = tmp;
 		}	
 	}
@@ -52,9 +53,9 @@ class Block {
 const printCell = (ctx, x, y, color = BG) => {
 	if (checkRange(x, y)) {
 		ctx.fillStyle = GREY;
-		ctx.fillRect(x * DOT_SIZE, y * DOT_SIZE, DOT_SIZE, DOT_SIZE);
+		ctx.fillRect(x * Config.DOT_SIZE, y * Config.DOT_SIZE, Config.DOT_SIZE, Config.DOT_SIZE);
 		ctx.fillStyle = color;
-		ctx.fillRect(x * DOT_SIZE  + 2, y * DOT_SIZE + 2, DOT_SIZE - 4, DOT_SIZE - 4);
+		ctx.fillRect(x * Config.DOT_SIZE  + 2, y * Config.DOT_SIZE + 2, Config.DOT_SIZE - 4, Config.DOT_SIZE - 4);
 		// ctx.strokeStyle = GREY;
 		// ctx.strokeRect(x * DOT_SIZE, y * DOT_SIZE, DOT_SIZE, DOT_SIZE);
 	} else {
@@ -63,14 +64,14 @@ const printCell = (ctx, x, y, color = BG) => {
 };
 
 const clearCell = (ctx, x, y)=> {
-	ctx.clearRect(x * DOT_SIZE, y * DOT_SIZE, DOT_SIZE, DOT_SIZE);
+	ctx.clearRect(x * Config.DOT_SIZE, y * Config.DOT_SIZE, Config.DOT_SIZE, Config.DOT_SIZE);
 	ctx.fillStyle = BG;
-	ctx.fillRect(x * DOT_SIZE, y * DOT_SIZE, DOT_SIZE, DOT_SIZE);
+	ctx.fillRect(x * Config.DOT_SIZE, y * Config.DOT_SIZE, Config.DOT_SIZE, Config.DOT_SIZE);
 	// ctx.strokeStyle = BG;
 	// ctx.strokeRect(x * DOT_SIZE, y * DOT_SIZE, DOT_SIZE, DOT_SIZE);
 };
 const checkRange = (x, y) => {
-	if ((0 <= x) && (x < FIELD_WIDTH) && (0 <= y) && (y < FIELD_HEIGHT)) {
+	if ((0 <= x) && (x < Config.FIELD_WIDTH) && (0 <= y) && (y < Config.FIELD_HEIGHT)) {
 		return true;
 	}
 	return false;
