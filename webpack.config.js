@@ -12,5 +12,18 @@ module.exports = {
 	  compress: true,
 	  port: 8080,
 	  open: true,
-  }
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: "eslint-loader"
+          }
+        ]
+      }
+    ]
+  },
 };
